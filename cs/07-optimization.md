@@ -85,3 +85,16 @@ Ve viewmodelu je také jistý prostor pro optimalizaci. Objekt `Article` načít
 ```
 
 Vlastnost `Context.IsPostBack` bude mít hodnotu `true` v případě, že se jedná o postback. Článek načítáme z databáze pouze v případě, že se o postback nejedná.
+Díky tomu snížíme zátěž na databázi.
+
+### 7.3 Optimalizace pro vyhledávače
+
+Vlastnost `RenderSettings.Mode="Server"` se dá použít i pro vyhledávače, například na úvodní stránce. Vyhledávače sice umí spouštět JavaScript a zaindexují i obsah generovaný z viewmodelu na klientovi, nicméně lze jim pomoci právě server renderingem.
+
+> Otevřete stránku `Default.dothtml` a komponentě `Repeater` přidejte `RenderSettings.Mode="Server"`. 
+
+Doteď se `Repeater` generoval jako `<div data-bind="foreach: RecentArticles">` a uvnitř tohoto elementu byla pouze šablona jednoho článku, která se rozmnožila pomocí knihovny Knockout JS. 
+
+Po zapnutí server renderingu DotVVM vyrenderovalo celý `Repeater` jako HTML. Díky tomu bude obsah pro vyhledávače srozumitelnější, na druhou stranu pokud byste ve stránce kolekci `RecentArticles` upravili, změna by se již neprojevila - obsah komponenty je vyrenderovaný natvrdo a Knockout jej již nemůže měnit. Existuje ještě možnost přidat komponentě `PostBack.Update="true"`, což HTML komponenty při postbacku přegeneruje a nahradí ve stránce. Přenáší se při tom ale více dat. 
+
+Příští verze DotVVM bude i oblast server renderingu vylepšovat, aby byly DotVVM aplikace efektivnější.
