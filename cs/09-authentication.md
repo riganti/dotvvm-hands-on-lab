@@ -90,6 +90,7 @@ Komponentě nastavujeme vlastnost `RenderWrapperTag` na `false`, protože standa
     config.RouteTable.Add("SignIn", "sign-in", "Views/SignIn.dothtml");
 
     config.RouteTable.Add("Admin_Articles", "admin/articles", "Views/Admin/Articles.dothtml");
+    config.RouteTable.Add("Admin_ArticleDetail", "admin/article/{Id}", "Views/Admin/ArticleDetail.dothtml");
 ```
 
 > Dále musíme v metodě `ConfigureControls` zaregistrovat komponentu `Menu`, abychom ji mohli použít ve stránce:
