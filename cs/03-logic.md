@@ -35,3 +35,5 @@ Součástí je také složka `Services`, která již obsahuje všechny funkce, k
 Aby DotVVM projekt mohl DAL a BL používat, je nutné ještě přidat poslední referenci.
 
 > Pravým tlačítkem klikněte na projekt `DotvvmBlog` a přidejte referenci na projekt `DotvvmBlog.BL`.
+
+> Pro jistotu ještě ověřte, že všechny projekty používají stejnou verzi .NET Frameworku (např. 4.5.2). V každém projektu stačí kliknout dvakrát na položku *Properties*.
