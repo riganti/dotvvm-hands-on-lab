@@ -1,0 +1,34 @@
+﻿@viewModel DotvvmBlog.ViewModels.DefaultViewModel, DotvvmBlog
+@masterPage Views/Site.dotmaster
+
+<dot:Content ContentPlaceHolderID="MainContent">
+
+    <div class="jumbotron">
+        <h1>DotVVM Blog</h1>
+        <h2>Recent Articles</h2>
+    </div>
+
+    <dot:Repeater DataSource="{value: RecentArticles}" RenderSettings.Mode="Server">
+        <div class="box-article">
+            <h3>
+                <dot:RouteLink RouteName="ArticleDetail" Param-Id="{value: Id}" Text="{value: Title}" />
+            </h3>
+            
+            <div class="article-metadata">
+                Published on <dot:Literal Text="{value: PublishedDate}" FormatString="d" />
+                |
+                Author: {{value: AuthorName}}
+            </div>
+
+            <p>{{value: Abstract}}</p>
+
+            <div class="text-right">
+                <dot:RouteLink RouteName="ArticleDetail" Param-Id="{value: Id}" Text="Read Article"
+                               class="btn btn-primary"/>
+            </div>
+        </div>
+        <hr />
+    </dot:Repeater>
+
+</dot:Content>
+

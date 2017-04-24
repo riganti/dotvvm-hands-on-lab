@@ -1,0 +1,53 @@
+﻿@viewModel DotvvmBlog.ViewModels.SiteViewModel, DotvvmBlog
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <dot:RouteLink RouteName="Default" class="navbar-brand">DotVVM Blog</dot:RouteLink>
+        </div>
+
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="nav navbar-nav">
+                <li>
+                    <dot:RouteLink RouteName="Default">Home</dot:RouteLink>
+                </li>
+            </ul>
+            <dot:AuthenticatedView RenderWrapperTag="false">
+                <NotAuthenticatedTemplate>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <dot:RouteLink RouteName="SignIn">Sign In</dot:RouteLink>
+                        </li>                        
+                    </ul>
+
+                </NotAuthenticatedTemplate>
+                <AuthenticatedTemplate>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <dot:RouteLink RouteName="Admin_Articles">Admin Section</dot:RouteLink>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                {{value: CurrentUserName}} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <dot:LinkButton Click="{command: SignOut()}" Validation.Enabled="false">Sign Out</dot:LinkButton>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </AuthenticatedTemplate>
+            </dot:AuthenticatedView>
+        </div>
+    </div>
+</nav>

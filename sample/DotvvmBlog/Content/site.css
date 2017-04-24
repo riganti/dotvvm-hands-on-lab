@@ -1,0 +1,70 @@
+﻿/* LAYOUT */
+
+.part-login {
+    background-color: #404040;
+    height: 40px;
+}
+
+.part-content .jumbotron {
+    border-radius: 0px;
+    padding: 10px 20px;
+}
+
+.part-footer {
+    background-color: #f0f0f0;
+    padding: 10px;
+    text-align: center;
+}
+
+
+
+/* ARTICLE */
+.box-article {
+    border-left: solid 5px #008b8b;
+    padding-left: 15px;
+}
+
+.article-metadata {
+    text-transform: uppercase;
+    color: #a0a0a0;
+}
+
+.article-content {
+    margin-top: 25px;
+}
+
+.article-content h1 {
+    font-size: 18pt;
+}
+.article-content h2 {
+    font-size: 16pt;
+}
+.article-content h3 {
+    font-size: 14pt;
+}
+.article-content h4, .article-content h5, .article-content h6 {
+    font-size: 12pt;
+}
+
+
+/* COMMENTS */
+.box-comment {
+    border: 1px solid #e0e0e0;
+    border-left: solid 5px #008b8b;
+    padding: 15px;
+    margin: 10px 0px;
+}
+.comment-metadata {
+    text-transform: uppercase;
+    color: #a0a0a0;
+}
+.validation {
+    color: maroon;
+}
+
+
+/* SIGN IN */
+.box-signin {
+    max-width: 500px;
+    margin: 50px auto;
+}

@@ -1,0 +1,29 @@
+﻿@viewModel DotvvmBlog.ViewModels.SiteViewModel, DotvvmBlog
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>{{value: PageTitle}}</title>
+</head>
+<body Validator.InvalidCssClass="has-error">
+
+    <cc:Menu class="part-header" />
+
+    <div class="container part-content">
+
+        <dot:ContentPlaceHolder ID="MainContent" />
+
+    </div>
+
+    <div class="container-fluid part-footer">
+        Powered by <a href="https://www.dotvvm.com" target="_blank">DotVVM</a>
+    </div>
+
+    <dot:RequiredResource Name="site" />
+
+</body>
+</html>
+
+

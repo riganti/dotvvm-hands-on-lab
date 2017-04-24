@@ -1,0 +1,33 @@
+﻿@viewModel DotvvmBlog.ViewModels.SignInViewModel, DotvvmBlog
+@masterPage Views/Site.dotmaster
+
+<dot:Content ContentPlaceHolderID="MainContent">
+
+    <form class="form box-signin" DataContext="{value: Data}">
+        <h3>Sign In</h3>
+
+        <div class="alert alert-danger" Visible="{value: _parent.ErrorMessage != null}">
+            {{value: _parent.ErrorMessage}}
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">User Name</label>
+            <div Validator.Value="{value: UserName}">
+                <dot:TextBox Text="{value: UserName}" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <div Validator.Value="{value: Password}">
+                <dot:TextBox Text="{value: Password}" Type="Password" class="form-control" />
+            </div>
+        </div>
+        <div class="text-right">
+            <dot:Button Text="Sign In" IsSubmitButton="true"
+                        Click="{command: _parent.SignIn()}"
+                        class="btn btn-primary" />
+        </div>
+    </form>
+
+</dot:Content>
+

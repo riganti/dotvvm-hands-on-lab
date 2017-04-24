@@ -1,0 +1,65 @@
+﻿@viewModel DotvvmBlog.ViewModels.ArticleDetailViewModel, DotvvmBlog
+@masterPage Views/Site.dotmaster
+
+<dot:Content ContentPlaceHolderID="MainContent">
+
+    <div class="part-article" DataContext="{value: Article}">
+
+        <div class="jumbotron">
+            <h1>{{value: Title}}</h1>
+            <h2>{{value: BlogName}}</h2>
+        </div>
+
+        <div class="article-metadata">
+            Published on
+            <dot:Literal Text="{value: PublishedDate}" FormatString="d" />
+            |
+            Author: {{value: AuthorName}}
+        </div>
+
+        <dot:HtmlLiteral Html="{value: Html}" RenderSettings.Mode="Server"
+                         class="article-content" />
+
+    </div>
+
+    <hr />
+    <h3>Your Comments</h3>
+
+    <dot:Repeater DataSource="{value: Comments}">
+        <ItemTemplate>
+            <div class="box-comment">
+                <div class="comment-metadata">
+                    Posted on
+                    <dot:Literal Text="{value: CreatedDate}" FormatString="g" />
+                </div>
+
+                <dot:HtmlLiteral Html="{value: Html}" />
+            </div>
+        </ItemTemplate>
+        <EmptyDataTemplate>
+            <p><em>It's lonely here. Be the first to add your comments or questions...</em></p>
+        </EmptyDataTemplate>
+    </dot:Repeater>
+
+    <hr />
+    <h3>Add Comment</h3>
+
+    <form class="form" DataContext="{value: NewComment}">
+        <div class="form-group">
+            <div Validator.Value="{value: Text}">
+                <dot:TextBox Text="{value: Text}" Type="MultiLine"
+                             class="form-control" style="height: 140px" />
+            </div>
+        </div>
+        <div class="form-group validation">
+            <dot:ValidationSummary Validation.Target="{value: _this}" />
+        </div>
+        <div class="text-right">
+            <dot:Button Text="Post Comment" Click="{command: _parent.PostComment()}"
+                        IsSubmitButton="true"
+                        class="btn btn-primary" />
+        </div>
+    </form>
+
+</dot:Content>
+

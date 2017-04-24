@@ -1,0 +1,20 @@
+﻿@viewModel DotvvmBlog.ViewModels.Admin.ArticlesViewModel, DotvvmBlog
+@masterPage Views/Site.dotmaster
+
+<dot:Content ContentPlaceHolderID="MainContent">
+
+    <h2>All Articles</h2>
+
+    <dot:GridView DataSource="{value: Articles}" class="table table-striped">
+        <dot:GridViewTextColumn ValueBinding="{value: Title}" HeaderText="Title" AllowSorting="true" />
+        <dot:GridViewTextColumn ValueBinding="{value: PublishedDate}" HeaderText="Published" FormatString="d" AllowSorting="true" />
+        <dot:GridViewTextColumn ValueBinding="{value: BlogName}" HeaderText="Blog" AllowSorting="true" />
+        <dot:GridViewTemplateColumn>
+            <dot:RouteLink RouteName="Admin_ArticleDetail" Param-Id="{value: Id}" Text="Edit" />
+        </dot:GridViewTemplateColumn>
+    </dot:GridView>
+
+    <dot:DataPager DataSet="{value: Articles}" class="pagination" />
+
+</dot:Content>
+
