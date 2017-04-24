@@ -36,4 +36,6 @@ Aby DotVVM projekt mohl DAL a BL používat, je nutné ještě přidat poslední
 
 > Pravým tlačítkem klikněte na projekt `DotvvmBlog` a přidejte referenci na projekt `DotvvmBlog.BL`.
 
+> V *Package Manager Console* vyberte projekt `DotvvmBlog` a doinstalujte balíček ASP.NET Identity: `Install-Package Microsoft.AspNet.Identity.EntityFramework`.
+
 > Pro jistotu ještě ověřte, že všechny projekty používají stejnou verzi .NET Frameworku (např. 4.5.2). V každém projektu stačí kliknout dvakrát na položku *Properties*.
