@@ -1,0 +1,244 @@
+## 9 Autentizace
+
+Nyní do aplikace přidáme možnost přihlašování a vytvoříme jednoduchou administraci, kde bude možné spravovat články.
+
+### 9.1 Aplikační menu
+
+V master page jsme si nachystali `div`, do nějž můžeme umístit menu. Protože menu bude rozsáhlé, je vhodné jej vyčlenit do samostatné komponenty.
+
+> Přidejte tedy do projektu `DotvvmBlog` složku `Controls`.
+
+> Do složky přidejte novou položku typu *DotVVM User Control* s názvem `Menu`.
+
+> V následujícím okně klikněte na tlačítko *OK*. Tato komponenta nebude mít žádnou logiku, nemusíme jí přidávat code behind soubor.
+
+<img src="09-authentication-create-control.png" alt="Přidání komponenty" />
+
+> Upravte direktivu `@viewModel` na následující hodnotu:
+
+```
+@viewModel DotvvmBlog.ViewModels.SiteViewModel, DotvvmBlog
+```
+
+Tím říkáme, že komponentu bude možné použít pouze na místě, kde `DataContext` je typu `SiteViewModel`, nebo třída, která z této třídy dědí. V komponentách i master pages do direktivy `@viewModel` lze uvést i rozhraní. Typ, který je `DataContext`em, pak musí toto rozhraní implementovat.
+
+Je to nutné kvůli tomu, že DotVVM potřebuje vědět, oproti jakému typu má vyhodnocovat data-bindingy.
+
+> Do komponenty přidejte následující kód:
+
+```
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <dot:RouteLink RouteName="Default" class="navbar-brand">DotVVM Blog</dot:RouteLink>
+        </div>
+
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="nav navbar-nav">
+                <li>
+                    <dot:RouteLink RouteName="Default">Home</dot:RouteLink>
+                </li>
+            </ul>
+            <dot:AuthenticatedView RenderWrapperTag="false">
+                <NotAuthenticatedTemplate>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <dot:RouteLink RouteName="SignIn">Sign In</dot:RouteLink>
+                        </li>                        
+                    </ul>
+
+                </NotAuthenticatedTemplate>
+                <AuthenticatedTemplate>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <dot:RouteLink RouteName="Admin_Articles">Admin Section</dot:RouteLink>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                {{value: CurrentUserName}} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <dot:LinkButton Click="{command: SignOut()}" Validation.Enabled="false">Sign Out</dot:LinkButton>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </AuthenticatedTemplate>
+            </dot:AuthenticatedView>
+        </div>
+    </div>
+</nav>
+```
+
+Jedná se o standardní Bootstrapové menu, kde jsme použili komponentu `AuthenticatedView`. Tato komponenta umožňuje renderovat jiný obsah pro přihlášené (`AuthenticatedTemplate`) a nepřihlášené (`NotAuthenticatedTemplate`) uživatele.
+
+Komponentě nastavujeme vlastnost `RenderWrapperTag` na `false`, protože standardně renderuje element `div`, což by nám uvnitř menu rozbilo strukturu, se kterou Bootstrap CSS počítají.
+
+> Do metody `ConfigureRoutes` v souboru `Startup.cs` přidejte následující routy:
+
+```
+    config.RouteTable.Add("SignIn", "sign-in", "Views/SignIn.dothtml");
+
+    config.RouteTable.Add("Admin_Articles", "admin/articles", "Views/Admin/Articles.dothtml");
+```
+
+> Dále musíme v metodě `ConfigureControls` zaregistrovat komponentu `Menu`, abychom ji mohli použít ve stránce:
+
+```
+    config.Markup.AddMarkupControl("cc", "Menu", "Controls/Menu.dotcontrol");
+```
+
+> V master page můžeme nyní první `div` s CSS třídou `part-header` nahradit následujícím kódem:
+
+```
+<cc:Menu class="part-header" />
+```
+
+> Aby bylo možné stránku spustit, do třídy `SiteViewModel` přidejte tento kód:
+
+```
+    public string CurrentUserName => Context.HttpContext.User.Identity.Name;
+
+    public void SignOut()
+    {
+        Context.GetAuthentication().SignOut();
+        Context.RedirectToRoute("Default");
+    }
+```
+
+Vlastnost `CurrentUserName` z aktuálního HTTP requestu zjistí identitu uživatele a vrátí uživatelské jméno.
+
+Metoda `SignOut` odhlásí aktuálního uživatele a přesměruje na úvodní stránku. Tlačítko, které tuto metodu volá, má nastaveno `Validation.Enabled="false"`, aby nespouštělo validaci - odhlásit se uživatel může i pokud nemá ve stránce vyplněna všechna pole správně.
+
+> Nyní můžete aplikaci spustit. Mělo by se zobrazit aplikační menu s tlačítkem pro přihlášení.
+
+### 9.2 Přihlašovací stránka
+
+> Přidejte do složky `Views` stránku (*DotVVM Page*) s názvem `SignIn.dothtml` a vložte ji do master page `Views/Site.dotmaster`.
+
+> Do komponenty `Content` vložte následující kód:
+
+```
+    <form class="form box-signin" DataContext="{value: Data}">
+        <h3>Sign In</h3>
+
+        <div class="alert alert-danger" Visible="{value: _parent.ErrorMessage != null}">
+            {{value: _parent.ErrorMessage}}
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">User Name</label>
+            <div Validator.Value="{value: UserName}">
+                <dot:TextBox Text="{value: UserName}" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <div Validator.Value="{value: Password}">
+                <dot:TextBox Text="{value: Password}" Type="Password" class="form-control" />
+            </div>
+        </div>
+        <div class="text-right">
+            <dot:Button Text="Sign In" IsSubmitButton="true"
+                        Click="{command: _parent.SignIn()}"
+                        class="btn btn-primary" />
+        </div>
+    </form>
+```
+
+Tím jsme vytvořili jednoduchý přihlašovací formulář s políčky pro uživatelské jméno a heslo. Pole pro zadání hesla má nastaveno `Type="Password"`.
+
+Nahoře je ještě `div` s CSS třídou `alert alert-danger`. Nastavili jsme mu vlastnost `Visible` na výraz `ErrorMessage != null`. Pokud bude vlastnost `ErrorMessage` nastavena, tato komponenta se zobrazí, jinak bude skryta (pomocí CSS vlastnosti `display: none`). Vlastnost `Visible` můžete v DotVVM používat na libovolné komponentě nebo na libovolném elementu.
+
+> Do třídy viewmodelu přidejte následující kód:
+
+```
+    public override string PageTitle => "Sign In | DotVVM Blog";
+
+    public SignInDTO Data { get; set; } = new SignInDTO();
+
+    public string ErrorMessage { get; set; }
+
+    public void SignIn()
+    {
+        var userService = new UserService();
+        var identity = userService.SignIn(Data);
+        if (identity == null)
+        {
+            ErrorMessage = "Invalid user name or password!";
+        }
+        else
+        {
+            Context.GetAuthentication().SignIn(identity);
+            Context.RedirectToRoute("Default");
+        }
+    }
+```
+
+V business vrstvě máme třídu `UserService`, která má na starosti přihlašování uživatelů. Její metodě `SignIn` předáme objekt s uživatelským jménem a heslem a pokud je uživatel ověřen, tato metoda vrátí objekt `ClaimsIdentity` s informacemi o uživateli. V opačném případě vrátí `null`.
+
+Pokud se podíváte dovnitř metody `SignIn`, používá se zde třída `UserManager`, která je součástí knihovny ASP.NET Identity. Ta má metodu `Find`, která vyhledá uživatele podle jména a hesla. Poté se volá funkce `CreateIdentity`, která z informací o uživateli vytvoří právě objekt `ClaimsIdentity`. Tento objekt obsahuje mimo jiné jméno uživatele a seznam rolí, do nichž uživatel patří.
+
+Protože se jedná o vzorovou aplikaci, v databázi máme dva testovací uživatele:
+
+* uživatel `admin` je v roli `administrator` a bude moci editovat články z libovolného blogu
+
+* uživatel `tomas` je běžný uživatel a má právo na editaci pouze vlastního blogu
+
+Uživatelé v naší databázi nemají přiřazeno heslo. Funkce je napsána tak, že heslo použité při prvním příhlášení uživateli nastaví, takže si zapamatujte, kterým heslem jste se přihlásili poprvé a to používejte nadále.
+
+Ve viewmodelu pak voláme `Context.GetAuthentication().SignIn(identity)`, což uživateli daného HTTP requestu nastaví identitu. Pak uživatele přesměrujeme na soure `Admin_Articles`. 
+
+Pokud se přihlášení nezdařilo, nastavíme vlastnost `ErorrMessage`, což uživateli zobrazí chybovou hlášku.
+
+### 9.3 Konfigurace
+
+Ještě než stránku vyzkoušíme, v souboru `Startup.cs` je třeba nastavit úložiště pro autentizační token uživatele. Jakmile uživatele přihlásíme, je nutné (typicky do cookies) uložit hodnotu, kterou se bude moci při příštím HTTP požadavku prokázat. Díky tomu pak ve vlastnosti `Context.HttpContext.User.Identity` najdeme daný objekt `ClaimsIdentity`, pomocí kterého zjistíme jméno uživatele.
+
+> V *Package Manager Console* vyberte jako projekt `DotvvmBlog` a spusťte příkaz `Install-Package Microsoft.Owin.Security.Cookies`.
+
+Tím nainstalujeme knihovnu OWIN Security Cookies, která umí `ClaimsIdentity` bezpečně uložit do cookie.
+
+> Otevřete soubor `Startup.cs` a *nad volání `UseDotVVM` přidejte následující kus kódu:
+
+```
+    app.UseCookieAuthentication(new CookieAuthenticationOptions()
+    {
+        AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+        LoginPath = new PathString("/sign-in"),
+        Provider = new CookieAuthenticationProvider()
+        {
+            OnApplyRedirect = context =>
+            {
+                DotvvmAuthenticationHelper.ApplyRedirectResponse(context.OwinContext, context.RedirectUri);
+            }
+        }
+    });
+```
+
+> Bude třeba přidat `using Microsoft.Owin.Security.Cookies;` a `using Microsoft.AspNet.Identity;`.
+
+Tento kus kódu do OWIN pipeline zaregistroval middleware, který při každém příchozím HTTP requestu přečte autentizační cookie a nastaví `Context.HttpContext.User.Identity` na příslušnou `ClaimsIdentity`. Protože DotVVM přijde na řadu až potom, bude moci přečíst informace o aktuálně přihlášeném uživateli.
+
+Pokud by navíc DotVVM vrátilo HTTP kód `401 Unauthorized`, tento middleware uživatele přesměruje na přihlašovací stránku. 
+
+V DotVVM je nutné nastavit vlastnost `OnApplyRedirect`. DotVVM totiž redirecty v případě postbacku nemůže posílat jako HTTP kód `302`, jelikož je požadavek volán AJAXem.
+Funkce `DotvvmAuthenticationHelper.ApplyRedirectResponse` místo toho vrátí HTTP kód `200` a v těle odpovědi pošle JSON objekt s adresou, kam se má předměrovat. Klientská část DotVVM pak v prohlížeči přejde na danou stránku.
+
+> Zkuste aplikaci spustit a přihlásit se jako `admin` s heslem `adminadmin`. 
+
+Protože jde o první přihlášení, heslo se neověřuje, ale uloží se k uživateli, a budete přesměrování na úvodní stránku.
+
+> Zkuste se odhlásit a přihlásit znovu s jiným heslem.
+
+Měla by být vidět chybová hláška.
