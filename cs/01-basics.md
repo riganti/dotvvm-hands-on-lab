@@ -1,0 +1,70 @@
+## 1 Založení projektu
+
+V tomto Hands on labu vytvoříme jednoduchý blog s administrací pomocí frameworku [DotVVM](https://www.dotvvm.com). 
+Pro práci s daty budeme používat databázi SQL Server Local DB a Entity Framework. Použijeme též CSS framework Bootstrap.
+
+Vzorový dokončený projekt najdete v repozitáři https://github.com/riganti/dotvvm-hands-on-lab
+
+### 1.1 Instalace prostředí
+
+Měli byste mít nainstalováno *Visual Studio 2015* nebo *Visual Studio 2017*. Do něj je třeba doinstalovat doplněk [DotVVM for Visual Studio](https://www.dotvvm.com).
+Bude stačit verze, která je k dispozici zdarma, doporučujeme však [vyžádat si 30denní trial](https://www.dotvvm.com/get-trial). 
+
+### 1.2 Založení projektu
+
+Po nainstalování doplňku stačí spustit Visual Studio a založit nový projekt. DotVVM může fungovat jak na *.NET Framework*u, tak na *.NET Core*. 
+V tomto labu budeme používat verzi pro *OWIN a .NET Framework 4.5.1*. 
+
+Rozdílů oproti .NET Core verzi je v DotVVM naprosté minimum, liší se především konfigurace a startu aplikace. Reálně se tato změna týká jen souboru `Startup.cs`, který na .NET Frameworku a na .NET Core vypadá trochu jinak.
+
+> Založte ve Visual Studiu nový projekt typu *DotVVM Web Application (OWIN on .NET Framework)*. Pojmenujte jej `DotvvmBlog` (dodržte velikost písmen).
+
+<img src="01-basics-new-project.png" alt="Založení projektu" />
+
+Visual Studio vytvoří základní strukturu projektu, kde vidíme několik základních souborů:
+
+* `Startup.cs` je konfigurační třída OWINu, které říkáme, že používáme DotVVM. Ve funkci `app.UseDotVVM<>` se odkazujeme na třídu `DotvvmStartup`. Zde bychom teoreticky mohli přidat i další technologie, např. ASP.NET Web API nebo ASP.NET MVC.
+
+* `DotvvmStartup.cs` obsahuje konfiguraci samotného DotVVM - především routing, registrace vlastních komponent, cesty ke skriptům a stylům.
+
+* `web.config` je klasický konfigurační soubor ASP.NET a IIS.
+
+* `Views` je složka, do které budeme dávat markup soubory (typicky mají příponu `.dothtml`).
+
+* `ViewModels` je složka, do které se budou dávat viewmodely (třídy v jazyce C#).
+
+### 1.3 První stránka
+
+V projektu je již nachystaná stránka `default.dothtml`. Když ji otevřete, uvidíte na prvním řádku odkaz na viewmodel, který k této stránce patří.
+
+Dále je zde klasická struktura HTML souboru - sekce `html`, `head` a `body`. 
+
+Uvnitř stránek můžeme používat tzv. serverové komponenty, např. `<dot:TextBox />`. Tyto komponenty DotVVM překládá na klasické HTML elementy, např. `<input type="text" />`. 
+
+V DOTHTML souborech lze též používat tzv. data-binding. Jedná se o výrazy, které se odkazují na vlastnosti nebo funkce viewmodelu:
+
+```
+<h1>{{value: Title}}</h1>
+```
+
+Touto syntaxí říkáme, že dovnitř elementu `h1` chceme vypsat obsah vlastnosti `Title`. DotVVM zároveň zajistí, že když se tato vlastnost kdykoliv změní, projeví se tato změna i uvnitř tohoto elementu `h1`.
+
+Binding lze použít i v atributu HTML elementů nebo komponent, v tomto případě se nemusí použít zdvojené složené závorky, stačí jedna.
+
+```
+<a href="{value: Url}">odkaz</a>
+```
+
+Pokud se podíváte do souboru `DefaultViewModel.cs`, uvidíte obyčejnou C# třídu, která má vlastnost `Title`. 
+
+Viewmodel má dvě funkce:
+
+1. Reprezentuje stav uživatelského rozhraní. Pro vše, co se ve view může změnit, existuje ve viewmodelu public property, která drží tuto hodnotu. S komponentami ve view se tato property provazuje právě pomocí bindingu.
+
+2. Viewmodel obsahuje funkce, které lze volat z view, například po kliknutí na tlačítko. Pokud ve viewmodelu nadefinujete funkci `Save()`, je možné se na ni odkázat pomocí bindingu: 
+
+```
+<dot:Button Text="Uložit" Click="{command: Save()}" />
+```
+
+Všimněte si, že se v případě volání funkcí uvnitř bindingu nepoužívá `value`, ale `command`. 
