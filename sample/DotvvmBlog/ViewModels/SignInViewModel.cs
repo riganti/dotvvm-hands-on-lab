@@ -20,16 +20,18 @@ namespace DotvvmBlog.ViewModels
         public void SignIn()
         {
             var userService = new UserService();
-            var identity = userService.SignIn(Data);
-            if (identity == null)
+            try
             {
-                ErrorMessage = "Invalid user name or password!";
-            }
-            else
-            {
+                var identity = userService.SignIn(Data);
                 Context.GetAuthentication().SignIn(identity);
-                Context.RedirectToRoute("Default");
             }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return;
+            }
+
+            Context.RedirectToRoute("Default");
         }
     }
 }
