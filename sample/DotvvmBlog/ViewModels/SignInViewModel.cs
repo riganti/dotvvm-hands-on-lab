@@ -9,28 +9,28 @@ using DotVVM.Framework.ViewModel;
 
 namespace DotvvmBlog.ViewModels
 {
-	public class SignInViewModel : SiteViewModel
-	{
-	    public override string PageTitle => "Sign In | DotVVM Blog";
+    public class SignInViewModel : SiteViewModel
+    {
+        public override string PageTitle => "Sign In | DotVVM Blog";
 
-	    public SignInDTO Data { get; set; } = new SignInDTO();
+        public SignInDTO Data { get; set; } = new SignInDTO();
 
-	    public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; }
 
-	    public void SignIn()
-	    {
-	        var userService = new UserService();
-	        var identity = userService.SignIn(Data);
-	        if (identity == null)
-	        {
-	            ErrorMessage = "Invalid user name or password!";
-	        }
-	        else
-	        {
-	            Context.GetAuthentication().SignIn(identity);
+        public void SignIn()
+        {
+            var userService = new UserService();
+            var identity = userService.SignIn(Data);
+            if (identity == null)
+            {
+                ErrorMessage = "Invalid user name or password!";
+            }
+            else
+            {
+                Context.GetAuthentication().SignIn(identity);
                 Context.RedirectToRoute("Default");
-	        }
-	    }
-	}
+            }
+        }
+    }
 }
 

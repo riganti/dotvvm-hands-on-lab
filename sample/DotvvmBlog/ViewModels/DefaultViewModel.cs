@@ -9,22 +9,22 @@ using DotVVM.Framework.ViewModel;
 
 namespace DotvvmBlog.ViewModels
 {
-	public class DefaultViewModel : SiteViewModel
-	{
+    public class DefaultViewModel : SiteViewModel
+    {
 
-	    public override string PageTitle => "DotVVM Blog";
+        public override string PageTitle => "DotVVM Blog";
 
 
 
         public List<ArticleListDTO> RecentArticles { get; private set; }
 
-	    public override Task PreRender()
-	    {
-	        var service = new HomepageService();
-	        RecentArticles = service.GetRecentArticles();
+        public override Task PreRender()
+        {
+            var service = new HomepageService();
+            RecentArticles = service.GetRecentArticles();
 
-	        return base.PreRender();
-	    }
-	}
+            return base.PreRender();
+        }
+    }
 }
 
