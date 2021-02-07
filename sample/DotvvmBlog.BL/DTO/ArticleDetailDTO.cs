@@ -10,7 +10,7 @@ namespace DotvvmBlog.BL.DTO
 
         public string Title { get; set; }
         
-        [Bind(Direction.None)]
+        //[Bind(Direction.None)]
         public string Html { get; set; }
 
         public DateTime? PublishedDate { get; set; }

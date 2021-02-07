@@ -7,19 +7,19 @@ using DotVVM.Framework.ViewModel;
 
 namespace DotvvmBlog.ViewModels
 {
-	public abstract class SiteViewModel : DotvvmViewModelBase
-	{
+    public abstract class SiteViewModel : DotvvmViewModelBase
+    {
 
         public abstract string PageTitle { get; }
 
-	    public string CurrentUserName => Context.HttpContext.User.Identity.Name;
+        public string CurrentUserName => Context.HttpContext.User.Identity.Name;
 
-	    public void SignOut()
-	    {
-	        Context.GetAuthentication().SignOut();
+        public void SignOut()
+        {
+            Context.GetAuthentication().SignOut();
             Context.RedirectToRoute("Default");
-	    }
+        }
 
-	}
+    }
 }
 

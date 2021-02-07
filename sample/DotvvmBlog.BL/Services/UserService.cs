@@ -20,14 +20,19 @@ namespace DotvvmBlog.BL.Services
                     {
                         // if the user doesn't have the password and signs in for the first time, save it
                         user = userManager.FindByName(data.UserName);
-                        if (!userManager.HasPassword(user.Id))
+                        if (user != null && !userManager.HasPassword(user.Id))
                         {
-                            userManager.ResetPassword(user.Id, userManager.GeneratePasswordResetToken(user.Id), data.Password);
+                            var result = userManager.ResetPassword(user.Id, userManager.GeneratePasswordResetToken(user.Id), data.Password);
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception("The password is too short!");
+                            }
+                            userManager.Update(user);
                             dc.SaveChanges();
                         }
                         else
                         {
-                            return null;
+                            throw new Exception("Invalid user name or password!");
                         }
                     }
 
